@@ -417,50 +417,59 @@ $star-color: rgba(255, 255, 255, 0.25);
   box-shadow: 0 0 10px rgba(255,255,180,0.7);
 }
 
-.flowerLayer {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 3;
-}
-
-.flower {
+.shape {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 160px;
-  height: 160px;
-  border-radius: 999px;
-  background:
-    radial-gradient(circle at 50% 45%, rgba(255,255,255,0.95), rgba(255,255,255,0) 30%),
-    conic-gradient(from 0deg, #ffd1dc, #ffc8a2, #ffe6b3, #ffd1dc);
-  filter: blur(0.4px) drop-shadow(0 8px 30px rgba(255, 200, 220, 0.35));
-  mask-image: radial-gradient(circle, black 60%, transparent 62%);
-}
-
-.rippleOverlay {
-  position: fixed;
   inset: 0;
-  pointer-events: none;
-  z-index: 2;
-  background: radial-gradient(circle at var(--ripple-x, 50%) var(--ripple-y, 50%), rgba(255,255,255,0.15), rgba(255,255,255,0.08) 25%, rgba(255,255,255,0.02) 40%, transparent 50%);
+  border-radius: inherit;
+  background: var(--bubble-color, rgba(255,255,255,0.35));
 }
 
-.quoteBar {
-  position: fixed;
-  left: 50%;
-  bottom: 18px;
-  transform: translateX(-50%);
-  z-index: 4;
-  padding: 8px 14px;
-  border-radius: 12px;
-  background: rgba(10, 14, 28, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  color: rgba(255,255,255,0.9);
-  font-size: 0.95rem;
-  line-height: 1.35rem;
-  backdrop-filter: blur(8px);
-  max-width: min(90vw, 680px);
-  text-align: center;
+.shapeJelly {
+  border-radius: 52% 48% 55% 45% / 55% 52% 48% 45%;
+  filter: saturate(1.05) blur(0.2px);
 }
+
+.shapeTriangle {
+  clip-path: polygon(50% 6%, 6% 94%, 94% 94%);
+}
+
+.shapeOrb {
+  border-radius: 999px;
+  box-shadow: 0 0 24px rgba(255,255,255,0.35), 0 0 44px rgba(255,255,255,0.18) inset;
+}
+
+.shapePetal {
+  width: 70%;
+  height: 70%;
+  left: 15%;
+  top: 15%;
+  border-radius: 60% 60% 50% 50% / 70% 70% 40% 40%;
+  transform: rotate(20deg);
+}
+
+.shapeSplash {
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.85), rgba(255,255,255,0) 55%), var(--bubble-color);
+  filter: blur(1px) saturate(1.1);
+  clip-path: polygon(50% 0%, 65% 10%, 80% 25%, 95% 45%, 85% 70%, 60% 85%, 40% 90%, 20% 80%, 10% 60%, 15% 35%, 30% 15%);
+}
+
+.shapeHeart {
+  width: 70%;
+  height: 70%;
+  left: 15%;
+  top: 15%;
+  background: var(--bubble-color);
+  position: absolute;
+}
+.shapeHeart:before,
+.shapeHeart:after {
+  content: "";
+  position: absolute;
+  width: 50%;
+  height: 80%;
+  background: inherit;
+  border-radius: 50% 50% 0 0;
+  top: 0;
+}
+.shapeHeart:before { left: 0; transform: rotate(-45deg); transform-origin: 100% 100%; }
+.shapeHeart:after { right: 0; transform: rotate(45deg); transform-origin: 0 100%; }

@@ -92,6 +92,16 @@ export function BubbleField({ bubbleColors, onScoreChange, flow = false }: Bubbl
     const basePoints = Math.max(1, Math.round(size / 7));
     const points = isDanger ? -basePoints * 8 : basePoints;
 
+    // Weighted shape assignment (rare specials)
+    const r = Math.random();
+    let shape: BubbleInstance["shape"] = "circle";
+    if (r < 0.06) shape = "jelly"; // uncommon
+    if (r < 0.035) shape = "triangle"; // rarer
+    if (r < 0.03) shape = "orb"; // glowing orb
+    if (r < 0.022) shape = "petal"; // rare
+    if (r < 0.015) shape = "splash"; // very rare
+    if (r < 0.01) shape = "heart"; // ultra rare
+
     return {
       id: randomId(),
       size,
@@ -105,6 +115,7 @@ export function BubbleField({ bubbleColors, onScoreChange, flow = false }: Bubbl
       blur: isDanger ? 0 : maybe(0.35) ? randomBetweenFloat(0.6, 1.6) : 0,
       isDanger,
       points,
+      shape,
     };
   }, [bounds, palette, sizeRange.max, sizeRange.min, flow]);
 

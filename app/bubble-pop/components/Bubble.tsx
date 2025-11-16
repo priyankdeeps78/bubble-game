@@ -89,6 +89,25 @@ export function Bubble({ data, onPopStart, onPopComplete }: BubbleProps) {
       whileHover={isPopping ? undefined : { scale: 1.05 }}
       whileTap={{ scale: 0.9 }}
     >
+      {/* Shape layer */}
+      <span
+        className={
+          data.shape === "jelly"
+            ? `${styles.shape} ${styles.shapeJelly}`
+            : data.shape === "triangle"
+            ? `${styles.shape} ${styles.shapeTriangle}`
+            : data.shape === "orb"
+            ? `${styles.shape} ${styles.shapeOrb}`
+            : data.shape === "petal"
+            ? `${styles.shape} ${styles.shapePetal}`
+            : data.shape === "splash"
+            ? `${styles.shape} ${styles.shapeSplash}`
+            : data.shape === "heart"
+            ? `${styles.shape} ${styles.shapeHeart}`
+            : `${styles.shape}`
+        }
+      />
+
       {/* Inner layer collapses fast */}
       <motion.span
         className={styles.bubbleInner}

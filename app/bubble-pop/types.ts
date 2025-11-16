@@ -11,6 +11,7 @@ export type BubbleInstance = {
   blur: number;
   isDanger: boolean;
   points: number;
+  shape?: "circle" | "jelly" | "triangle" | "orb" | "petal" | "splash" | "heart";
 };
 
 export type BurstInstance = {
