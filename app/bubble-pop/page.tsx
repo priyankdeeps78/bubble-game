@@ -60,6 +60,10 @@ export default function BubblePopPage() {
             <h1 className={styles.brandTitle}>Relax Mode</h1>
             <p className={styles.brandDescription}>Pop, breathe, repeat — bigger bubbles reward more, red ones bite softly.</p>
           </div>
+          <div className={styles.infoBlock}>
+            <p className={styles.infoTitle}>Why play?</p>
+            <p className={styles.infoText}>A tiny break for your brain. Gentle motion, soft sound, and satisfying pops help reset focus in 30–60 seconds.</p>
+          </div>
           <div className={styles.controlsBlock}>
             <ScorePanel score={score} highScore={highScore} />
             <SoundToggle />

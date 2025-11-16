@@ -52,7 +52,7 @@ $star-color: rgba(255, 255, 255, 0.25);
   left: 0;
   right: 0;
   height: var(--nav-height);
-  padding: 12px 24px;
+  padding: 14px 12px; /* more top/bottom, less left/right */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -98,6 +98,26 @@ $star-color: rgba(255, 255, 255, 0.25);
   color: rgba(255, 255, 255, 0.8);
 }
 
+.infoBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: 40ch;
+}
+
+.infoTitle {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.infoText {
+  font-size: 0.8rem;
+  line-height: 1.25rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+
 .controlsBlock {
   display: flex;
   align-items: center;
@@ -107,7 +127,7 @@ $star-color: rgba(255, 255, 255, 0.25);
 /* Mobile tweaks */
 @media (max-width: 480px) {
   .navBar {
-    padding: 10px 14px;
+    padding: 10px 10px; /* tighter sides on very small screens */
     gap: 8px;
   }
   .navContent {
@@ -117,11 +137,14 @@ $star-color: rgba(255, 255, 255, 0.25);
     letter-spacing: 0.22em;
   }
   .brandTitle {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     line-height: 1.2;
   }
   .brandDescription {
-    font-size: 0.78rem;
+    display: none; /* hide long line on tiny screens */
+  }
+  .infoBlock {
+    display: none; /* collapse right-side info on tiny screens */
   }
   .controlsBlock {
     gap: 8px;
