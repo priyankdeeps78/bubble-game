@@ -17,6 +17,13 @@ $star-color: rgba(255, 255, 255, 0.25);
   }
 }
 
+/* Super short viewports (mobile landscape): shrink nav height */
+@media (max-height: 540px) {
+  .page {
+    --nav-height: 58px;
+  }
+}
+
 .backgroundGlow {
   position: absolute;
   inset: -120px;
@@ -60,12 +67,6 @@ $star-color: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(6px);
 }
 
-@media (max-width: 640px) {
-  .navBar {
-    padding: 12px 12px;
-  }
-}
-
 .brandBlock {
   display: flex;
   flex-direction: column;
@@ -75,6 +76,35 @@ $star-color: rgba(255, 255, 255, 0.25);
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+/* Mobile tweaks */
+@media (max-width: 480px) {
+  .navBar {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+  .brandBlock p {
+    /* smaller tagline */
+    letter-spacing: 0.25em;
+    opacity: 0.75;
+  }
+  .brandBlock h1 {
+    font-size: 1.1rem;
+    line-height: 1.2;
+  }
+  .controlsBlock {
+    gap: 8px;
+  }
+  .scorePanel {
+    padding: 0.3rem 0.7rem;
+  }
+  .scoreValue {
+    font-size: 1rem;
+  }
+  .soundToggle {
+    padding: 0.35rem 0.8rem;
+  }
 }
 
 .playfield {
@@ -192,13 +222,6 @@ $star-color: rgba(255, 255, 255, 0.25);
   font-weight: 500;
   transition: transform 0.25s ease, border-color 0.25s ease,
     background 0.25s ease;
-  min-height: 44px; // mobile-friendly target
-}
-
-@media (max-width: 640px) {
-  .soundToggle {
-    padding: 0.6rem 1.3rem;
-  }
 }
 
 .soundToggle:hover,
@@ -262,8 +285,5 @@ $star-color: rgba(255, 255, 255, 0.25);
     border-radius: 0;
     padding: 0;
     min-height: 100vh;
-  }
-  .scoreValue {
-    font-size: 1.2rem;
   }
 }
