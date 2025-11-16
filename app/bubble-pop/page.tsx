@@ -8,6 +8,9 @@ import { ScorePanel } from "./components/ScorePanel";
 import { soundManager } from "./utils/soundManager";
 import { AmbientSelector } from "./components/AmbientSelector";
 import { Fireflies } from "./components/Fireflies";
+import { FlowerBloom } from "./components/FlowerBloom";
+import { RippleOverlay } from "./components/RippleOverlay";
+import { FloatingQuotes } from "./components/FloatingQuotes";
 
 const pastelPalette = [
   "#f8b4d9",
@@ -27,6 +30,9 @@ export default function BubblePopPage() {
   const [night, setNight] = useState(false);
   const [vw, setVw] = useState<number>(typeof window !== "undefined" ? window.innerWidth : 1200);
   const [vh, setVh] = useState<number>(typeof window !== "undefined" ? window.innerHeight : 800);
+  const [popCount, setPopCount] = useState(0);
+  const [showFlower, setShowFlower] = useState(false);
+  const [showRipple, setShowRipple] = useState(false);
 
   useEffect(() => {
     const onResize = () => {
@@ -36,6 +42,24 @@ export default function BubblePopPage() {
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
+
+  // Count pops and trigger rewards
+  useEffect(() => {
+    const onPop = () => setPopCount((c) => c + 1);
+    window.addEventListener("bubble-pop", onPop as EventListener);
+    return () => window.removeEventListener("bubble-pop", onPop as EventListener);
+  }, []);
+
+  useEffect(() => {
+    if (popCount === 20) {
+      setShowFlower(true);
+      setTimeout(() => setShowFlower(false), 1500);
+    }
+    if (popCount === 100) {
+      setShowRipple(true);
+      setTimeout(() => setShowRipple(false), 1500);
+    }
+  }, [popCount]);
 
   // Dense fill based on area, clamped
   const baseFireflies = Math.round((vw * vh) / 4500);
@@ -109,6 +133,9 @@ export default function BubblePopPage() {
       {/* Overlays */}
       {flow && <div className={styles.flowOverlay} aria-hidden="true" />}
       {night && !flow && <Fireflies enabled count={fireflyCount} />}
+      <FlowerBloom show={showFlower} />
+      <RippleOverlay show={showRipple} />
+      <FloatingQuotes paused={flow} />
 
       <section className={styles.playfield}>
         <BubbleField bubbleColors={pastelPalette} onScoreChange={handleScoreChange} flow={flow} />
