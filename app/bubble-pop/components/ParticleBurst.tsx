@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useMemo } from "react";
 import styles from "../styles.module.scss";
 import type { BurstInstance } from "../types";
-import { randomBetweenFloat } from "../utils/random";
+import { randomBetweenFloat, randomPastel } from "../utils/random";
 
 type Particle = {
   id: string;
@@ -12,6 +12,7 @@ type Particle = {
   dy: number;
   delay: number;
   size: number;
+  color: string;
 };
 
 export function ParticleBurst({ burst }: { burst: BurstInstance }) {
@@ -30,6 +31,7 @@ export function ParticleBurst({ burst }: { burst: BurstInstance }) {
         dy: Math.sin(angle) * distance,
         delay: randomBetweenFloat(0, 0.05 * Math.min(1.5, magnitude)),
         size: randomBetweenFloat(3, 8) * (0.8 + magnitude * 0.5),
+        color: randomPastel(),
       };
     });
   }, [burst.id, magnitude]);
@@ -51,7 +53,7 @@ export function ParticleBurst({ burst }: { burst: BurstInstance }) {
           style={{
             width: particle.size,
             height: particle.size,
-            background: burst.color,
+            background: particle.color,
           }}
           initial={{ x: 0, y: 0, opacity: 0.95, scale: 1 }}
           animate={{
