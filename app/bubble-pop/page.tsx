@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styles from "./styles.module.scss";
 import { BubbleField } from "./components/BubbleField";
 import { SoundToggle } from "./components/SoundToggle";
@@ -17,24 +17,29 @@ const pastelPalette = [
 
 const SCORE_KEY = "bubble-pop-high-score";
 
-const getStoredHighScore = () => {
-  if (typeof window === "undefined") return 0;
-  const stored = Number(localStorage.getItem(SCORE_KEY));
-  return Number.isNaN(stored) ? 0 : stored;
-};
-
 export default function BubblePopPage() {
   const [score, setScore] = useState(0);
-  const [highScore, setHighScore] = useState(getStoredHighScore);
+  const [highScore, setHighScore] = useState(0);
+
+  useEffect(() => {
+    // Hydrate high score from localStorage after mount to avoid SSR mismatches
+    try {
+      const stored = Number(localStorage.getItem(SCORE_KEY));
+      if (!Number.isNaN(stored)) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setHighScore(stored);
+      }
+    } catch {}
+  }, []);
 
   const handleScoreChange = useCallback((delta: number) => {
     setScore((prev) => {
       const nextScore = Math.max(0, prev + delta);
       setHighScore((current) => {
         if (nextScore > current) {
-          if (typeof window !== "undefined") {
+          try {
             localStorage.setItem(SCORE_KEY, String(nextScore));
-          }
+          } catch {}
           return nextScore;
         }
         return current;
