@@ -237,14 +237,7 @@ $star-color: rgba(255, 255, 255, 0.25);
     sway var(--sway-duration, 6s) ease-in-out infinite;
   transform-origin: center;
   overflow: hidden; /* contain inner layers */
-  will-change: transform, opacity;
-  transform: translateZ(0);
-}
-
-/* Night Mode optimization: avoid filter-based sway to reduce repaint cost */
-.night .bubble {
-  filter: none;
-  animation: floatUp var(--float-duration, 16s) linear infinite;
+  will-change: transform, opacity; /* perf hint */
 }
 
 .bubbleInner {
@@ -301,6 +294,7 @@ $star-color: rgba(255, 255, 255, 0.25);
   border-radius: 999px;
   background: var(--particle-color, rgba(255, 255, 255, 0.8));
   box-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
+  will-change: transform, opacity;
 }
 
 .soundToggle {
@@ -416,7 +410,6 @@ $star-color: rgba(255, 255, 255, 0.25);
   inset: 0;
   pointer-events: none;
   z-index: 2;
-  will-change: transform;
 }
 
 .firefly {
@@ -427,7 +420,6 @@ $star-color: rgba(255, 255, 255, 0.25);
   background: radial-gradient(circle, rgba(255,255,200,0.95), rgba(255,255,160,0.2) 70%, rgba(255,255,160,0) 80%);
   box-shadow: 0 0 10px rgba(255,255,180,0.7);
   will-change: transform, opacity;
-  animation: twinkle 2.4s ease-in-out infinite alternate;
 }
 
 .shape {

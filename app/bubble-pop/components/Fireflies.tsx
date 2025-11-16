@@ -15,7 +15,7 @@ export function Fireflies({ enabled = true, count = 30 }: { enabled?: boolean; c
   const containerRef = useRef<HTMLDivElement | null>(null);
   const flies = useRef<Fly[]>([]);
   const raf = useRef(0);
-  const nodes = useRef<HTMLElement[]>([]);
+  const frameIndex = useRef(0);
 
   const bounds = useMemo(() => ({ w: typeof window !== "undefined" ? window.innerWidth : 1200, h: typeof window !== "undefined" ? window.innerHeight : 800 }), []);
 
@@ -33,9 +33,6 @@ export function Fireflies({ enabled = true, count = 30 }: { enabled?: boolean; c
     }
     flies.current = arr;
 
-    // Cache child nodes once after mount
-    nodes.current = Array.from(containerRef.current?.children || []) as HTMLElement[];
-
     const onPop = (ev: Event) => {
       const e = ev as CustomEvent<{ x: number; y: number }>;
       const { x, y } = e.detail || { x: bounds.w / 2, y: bounds.h / 2 };
@@ -43,7 +40,7 @@ export function Fireflies({ enabled = true, count = 30 }: { enabled?: boolean; c
         const dx = f.x - x;
         const dy = f.y - y;
         const dist = Math.max(8, Math.hypot(dx, dy));
-        const strength = 1.8 / (dist / 60);
+        const strength = 1.6 / (dist / 60); // slightly gentler scatter
         f.vx += (dx / dist) * strength;
         f.vy += (dy / dist) * strength;
       }
@@ -51,10 +48,14 @@ export function Fireflies({ enabled = true, count = 30 }: { enabled?: boolean; c
 
     window.addEventListener("bubble-pop", onPop as EventListener);
 
-    let frame = 0;
     const step = () => {
-      const list = nodes.current;
-      for (let i = 0; i < flies.current.length; i++) {
+      const nodes = containerRef.current?.children || [];
+      const N = flies.current.length;
+      const updateHalf = Math.ceil(N / 2);
+      const start = (frameIndex.current % 2 === 0) ? 0 : updateHalf;
+      const end = Math.min(N, start + updateHalf);
+
+      for (let i = start; i < end; i++) {
         const f = flies.current[i];
         // gentle drift with subtle sine wobble
         f.phase += 0.015;
@@ -70,13 +71,14 @@ export function Fireflies({ enabled = true, count = 30 }: { enabled?: boolean; c
         if (f.x > bounds.w + 10) f.x = -10;
         if (f.y < -10) f.y = bounds.h + 10;
         if (f.y > bounds.h + 10) f.y = -10;
-        const el = list[i];
+        const el = nodes[i] as HTMLElement | undefined;
         if (el) {
           el.style.transform = `translate3d(${f.x}px, ${f.y}px, 0)`;
+          const glow = 0.6 + 0.4 * Math.sin(f.phase * 3 + i * 0.7);
+          el.style.opacity = String(glow);
         }
       }
-      // Optional: skip every other frame to reduce work at very high counts
-      frame = (frame + 1) & 1;
+      frameIndex.current++;
       raf.current = requestAnimationFrame(step);
     };
     raf.current = requestAnimationFrame(step);
