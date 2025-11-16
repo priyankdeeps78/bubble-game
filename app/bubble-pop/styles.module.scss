@@ -8,19 +8,19 @@ $star-color: rgba(255, 255, 255, 0.25);
   overflow: hidden;
   background: $page-gradient;
   color: #f7f7ff;
-  --nav-height: 72px;
+  --nav-height: 88px; /* more top/bottom space by default */
 }
 
 @media (min-width: 640px) {
   .page {
-    --nav-height: 80px;
+    --nav-height: 100px; /* larger on wider screens */
   }
 }
 
 /* Super short viewports (mobile landscape): shrink nav height */
 @media (max-height: 540px) {
   .page {
-    --nav-height: 58px;
+    --nav-height: 68px;
   }
 }
 
@@ -51,8 +51,8 @@ $star-color: rgba(255, 255, 255, 0.25);
   top: 0;
   left: 0;
   right: 0;
-  height: var(--nav-height);
-  padding: 14px 12px; /* more top/bottom, less left/right */
+  min-height: var(--nav-height); /* let padding add breathing room */
+  padding: 18px 14px; /* more top/bottom, modest sides */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -71,7 +71,7 @@ $star-color: rgba(255, 255, 255, 0.25);
   width: 100%;
   max-width: 1200px;
   display: flex;
-  align-items: center;
+  align-items: flex-start; /* allow multi-line blocks and top spacing */
   justify-content: space-between;
   gap: 16px;
 }
@@ -79,6 +79,7 @@ $star-color: rgba(255, 255, 255, 0.25);
 .brandBlock {
   display: flex;
   flex-direction: column;
+  gap: 2px;
 }
 
 .brandTagline {
@@ -93,8 +94,8 @@ $star-color: rgba(255, 255, 255, 0.25);
 }
 
 .brandDescription {
-  margin-top: 2px;
-  font-size: 0.85rem;
+  margin-top: 4px;
+  font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.8);
 }
 
@@ -127,8 +128,7 @@ $star-color: rgba(255, 255, 255, 0.25);
 /* Mobile tweaks */
 @media (max-width: 480px) {
   .navBar {
-    padding: 10px 10px; /* tighter sides on very small screens */
-    gap: 8px;
+    padding: 12px 10px;
   }
   .navContent {
     gap: 10px;
