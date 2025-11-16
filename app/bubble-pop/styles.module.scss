@@ -11,6 +11,32 @@ $star-color: rgba(255, 255, 255, 0.25);
   --nav-height: 88px; /* more top/bottom space by default */
 }
 
+.flowing {
+  filter: saturate(0.95);
+}
+
+.flowBlur {
+  position: fixed;
+  inset: 0;
+  backdrop-filter: blur(6px);
+  background: radial-gradient(circle at 50% 0%, rgba(255, 228, 196, 0.12), transparent 60%);
+  z-index: 2;
+}
+
+.flowToggle {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 4;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(12, 16, 32, 0.6);
+  color: #fff;
+  backdrop-filter: blur(6px);
+}
+
 @media (min-width: 640px) {
   .page {
     --nav-height: 100px; /* larger on wider screens */

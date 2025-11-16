@@ -17,6 +17,7 @@ const FALLBACK_COLOR = "hsla(200, 70%, 80%, 0.7)";
 export type BubbleFieldProps = {
   bubbleColors?: string[];
   onScoreChange?: (delta: number) => void;
+  flowMode?: boolean;
 };
 
 type SizeRange = {
@@ -24,7 +25,7 @@ type SizeRange = {
   max: number;
 };
 
-export function BubbleField({ bubbleColors, onScoreChange }: BubbleFieldProps) {
+export function BubbleField({ bubbleColors, onScoreChange, flowMode = false }: BubbleFieldProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const timeouts = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
   const [bounds, setBounds] = useState<{ width: number; height: number } | null>(null);
@@ -71,11 +72,11 @@ export function BubbleField({ bubbleColors, onScoreChange }: BubbleFieldProps) {
       : palette
         ? palette[randomInt(0, palette.length - 1)]
         : FALLBACK_COLOR;
-    // Speed up: shorter float durations and stronger horizontal drift
-    const floatDuration = randomBetweenFloat(4.5, 10.5);
-    const swayDuration = randomBetweenFloat(3, 6);
-    const driftX = randomBetweenFloat(-45, 45);
-    // Size-based scoring: bigger = more points, and bigger penalty for danger
+    // Speed profile
+    const floatDuration = flowMode ? randomBetweenFloat(9, 18) : randomBetweenFloat(4.5, 10.5);
+    const swayDuration = flowMode ? randomBetweenFloat(5.5, 9) : randomBetweenFloat(3, 6);
+    const driftX = flowMode ? randomBetweenFloat(-25, 25) : randomBetweenFloat(-45, 45);
+    // Size-based scoring (unchanged)
     const basePoints = Math.max(1, Math.round(size / 7));
     const points = isDanger ? -basePoints * 8 : basePoints;
 
@@ -93,7 +94,7 @@ export function BubbleField({ bubbleColors, onScoreChange }: BubbleFieldProps) {
       isDanger,
       points,
     };
-  }, [bounds, palette, sizeRange.max, sizeRange.min]);
+  }, [bounds, palette, sizeRange.max, sizeRange.min, flowMode]);
 
   useEffect(() => {
     if (!bounds) return;
@@ -173,6 +174,7 @@ export function BubbleField({ bubbleColors, onScoreChange }: BubbleFieldProps) {
               data={bubble}
               onPopStart={handlePopStart}
               onPopComplete={handlePopComplete}
+              gentlePop={flowMode}
             />
           ))}
         </AnimatePresence>

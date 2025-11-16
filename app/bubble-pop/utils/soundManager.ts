@@ -10,6 +10,7 @@ class SoundManager {
   private ambient?: Howl;
   private enabled = true;
   private ambientEnabled = true;
+  private ambientBase = 0.1;
 
   setEnabled(nextEnabled: boolean) {
     this.enabled = nextEnabled;
@@ -22,6 +23,7 @@ class SoundManager {
     }
     if (this.ambientEnabled) {
       const ambient = this.ensureAmbient();
+      ambient.volume(this.ambientBase);
       if (!ambient.playing()) {
         ambient.play();
       }
@@ -36,8 +38,16 @@ class SoundManager {
     }
     if (!this.enabled) return;
     const ambient = this.ensureAmbient();
+    ambient.volume(this.ambientBase);
     if (!ambient.playing()) {
       ambient.play();
+    }
+  }
+
+  setAmbientIntensity(volume: number) {
+    this.ambientBase = volume;
+    if (this.ambient) {
+      this.ambient.volume(volume);
     }
   }
 
@@ -70,7 +80,7 @@ class SoundManager {
     if (!this.ambient) {
       this.ambient = new Howl({
         src: [AMBIENT_SRC],
-        volume: 0.1,
+        volume: this.ambientBase,
         loop: true,
       });
     }
