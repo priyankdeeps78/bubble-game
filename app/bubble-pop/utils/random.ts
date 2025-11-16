@@ -4,9 +4,9 @@ export const randomInt = (min: number, max: number) =>
   Math.floor(randomBetween(min, max + 1));
 
 export const randomPastel = () => {
-  const hue = randomInt(180, 360);
-  const saturation = randomInt(45, 65);
-  const lightness = randomInt(70, 90);
+  const hue = randomInt(0, 360);
+  const saturation = randomInt(60, 85);
+  const lightness = randomInt(55, 75);
   return `hsl(${hue} ${saturation}% ${lightness}%)`;
 };
 

@@ -49,6 +49,26 @@ export function Bubble({ data, onPopStart, onPopComplete }: BubbleProps) {
     }
   }, [data.id, isPopping, onPopComplete]);
 
+  const animateValue = isPopping
+    ? data.isDanger
+      ? {
+          x: [0, -8, 8, -6, 6, -3, 3, 0],
+          scale: [1, 1.06, 1.06, 1.02, 1, 0.15],
+          opacity: [data.opacity, data.opacity, data.opacity, data.opacity, 1, 0],
+        }
+      : { scale: 0.15, opacity: 0 }
+    : { scale: 1, opacity: data.opacity };
+
+  const transitionValue = isPopping
+    ? data.isDanger
+      ? {
+          duration: 0.45,
+          ease: [0.16, 1, 0.3, 1] as const,
+          times: [0, 0.15, 0.3, 0.45, 0.6, 1],
+        }
+      : { duration: 0.18, ease: [0.2, 0.8, 0.2, 1] as const }
+    : { duration: data.floatDuration, ease: [0, 0, 1, 1] as const };
+
   return (
     <motion.button
       type="button"
@@ -63,15 +83,8 @@ export function Bubble({ data, onPopStart, onPopComplete }: BubbleProps) {
         }
       }}
       style={bubbleStyle}
-      animate={
-        isPopping
-          ? { scale: 0.15, opacity: 0 }
-          : { scale: 1, opacity: data.opacity }
-      }
-      transition={{
-        duration: isPopping ? 0.18 : data.floatDuration,
-        ease: isPopping ? [0.2, 0.8, 0.2, 1] : "linear",
-      }}
+      animate={animateValue}
+      transition={transitionValue}
       onAnimationComplete={handleComplete}
       whileHover={isPopping ? undefined : { scale: 1.05 }}
       whileTap={{ scale: 0.9 }}
