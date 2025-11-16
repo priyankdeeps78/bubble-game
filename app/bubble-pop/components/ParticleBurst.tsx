@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useMemo } from "react";
 import styles from "../styles.module.scss";
 import type { BurstInstance } from "../types";
-import { clamp, randomBetweenFloat } from "../utils/random";
+import { randomBetweenFloat } from "../utils/random";
 
 type Particle = {
   id: string;
@@ -15,26 +15,26 @@ type Particle = {
 };
 
 export function ParticleBurst({ burst }: { burst: BurstInstance }) {
-  const intensity = clamp(burst.size / 200, 0.5, 2);
+  // Normalized size factor: ~1.0 around 60px bubbles, larger > 1, tiny < 1
+  const magnitude = Math.max(0.6, Math.min(3, burst.size / 60));
 
   const particles = useMemo<Particle[]>(() => {
-    const base = 8;
-    const count = Math.floor(base * intensity + randomBetweenFloat(0, 6));
+    const baseCount = randomBetweenFloat(6, 10);
+    const count = Math.floor(baseCount * (0.8 + magnitude * 0.6));
     return Array.from({ length: count }, (_, index) => {
       const angle = randomBetweenFloat(0, Math.PI * 2);
-      const distance = randomBetweenFloat(30 * intensity, 110 * intensity);
+      const distance = randomBetweenFloat(28, 70) * (0.8 + magnitude * 0.8);
       return {
         id: `${burst.id}-p-${index}`,
         dx: Math.cos(angle) * distance,
         dy: Math.sin(angle) * distance,
-        delay: randomBetweenFloat(0, 0.06),
-        size: randomBetweenFloat(3 * Math.cbrt(intensity), 8 * Math.cbrt(intensity)),
+        delay: randomBetweenFloat(0, 0.05 * Math.min(1.5, magnitude)),
+        size: randomBetweenFloat(3, 8) * (0.8 + magnitude * 0.5),
       };
     });
-  }, [burst.id, intensity]);
+  }, [burst.id, magnitude]);
 
-  const showRing = intensity >= 0.9;
-  const ringSize = Math.min(420, Math.max(120, burst.size * 2.2));
+  const duration = Math.min(0.65, 0.35 + magnitude * 0.15);
 
   return (
     <div
@@ -44,25 +44,6 @@ export function ParticleBurst({ burst }: { burst: BurstInstance }) {
         top: burst.y - burst.size / 2,
       }}
     >
-      {showRing && (
-        <motion.span
-          aria-hidden
-          style={{
-            position: "absolute",
-            left: -ringSize / 2 + burst.size / 2,
-            top: -ringSize / 2 + burst.size / 2,
-            width: ringSize,
-            height: ringSize,
-            borderRadius: 9999,
-            border: "2px solid rgba(255,255,255,0.5)",
-            boxShadow: "0 0 50px rgba(255,255,255,0.35)",
-          }}
-          initial={{ scale: 0.25, opacity: 0.45 }}
-          animate={{ scale: 1.4, opacity: 0 }}
-          transition={{ duration: 0.45, ease: [0.2, 0.8, 0.2, 1] }}
-        />
-      )}
-
       {particles.map((particle) => (
         <motion.span
           key={particle.id}
@@ -80,7 +61,7 @@ export function ParticleBurst({ burst }: { burst: BurstInstance }) {
             scale: 0.3,
           }}
           transition={{
-            duration: 0.48,
+            duration,
             ease: [0.25, 0.46, 0.45, 0.94],
             delay: particle.delay,
           }}
