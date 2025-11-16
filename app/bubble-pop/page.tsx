@@ -78,7 +78,7 @@ export default function BubblePopPage() {
           <div className={styles.brandBlock}>
             <p className={styles.brandTagline}>Bubble Pop Universe</p>
             <h1 className={styles.brandTitle}>Relax Mode</h1>
-            <p className={styles.brandDescription}>Pop, breathe, repeat — bigger bubbles reward more, red ones bite softly.</p>
+            <p className={styles.brandDescription}>Pop, breathe, repeat... bigger bubbles reward more, red ones bite softly.</p>
           </div>
           <div className={styles.infoBlock}>
             <p className={styles.infoTitle}>Why play?</p>
