@@ -1,29 +1,28 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styles from "./styles.module.scss";
 import { BubbleField } from "./components/BubbleField";
 import { SoundToggle } from "./components/SoundToggle";
 import { ScorePanel } from "./components/ScorePanel";
 import { soundManager } from "./utils/soundManager";
-import { Decorations } from "./components/Decorations";
+import { AmbientSelector } from "./components/AmbientSelector";
 
-const sunrisePalette = ["#ffd6d1", "#ffc8a2", "#ffe6b3", "#ffb3c1", "#ffe0c2"]; // Calm Sunrise
-const spacePalette = ["#a38cff", "#7b6cff", "#4f3fcf", "#b096ff", "#9f86ff"]; // Deep Space Zen
-const forestPalette = ["#a8e6cf", "#b7d7a8", "#cde6a8", "#8bcf9b", "#e5f2cc"]; // Forest Breeze
-const arcticPalette = ["#d0f7ff", "#c2f1ff", "#e9fdff", "#bfe7f5", "#e2f9ff"]; // Arctic Mist
-const warmPalette = ["#ffc6c7", "#ffadad", "#ffd6a5", "#ffd1c1", "#ffcad4"]; // Warm Glow
+const pastelPalette = [
+  "#f8b4d9",
+  "#f7d3ba",
+  "#c8e9ff",
+  "#d4c5ff",
+  "#b4f8c8",
+  "#ffd6e0",
+];
 
 const SCORE_KEY = "bubble-pop-high-score";
-
-type Mood = "sunrise" | "space" | "forest" | "arctic" | "warm";
 
 export default function BubblePopPage() {
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
   const [flow, setFlow] = useState(false);
-  const [mood, setMood] = useState<Mood>("sunrise");
-  const [showThemeOverlay, setShowThemeOverlay] = useState(false);
 
   useEffect(() => {
     try {
@@ -35,29 +34,6 @@ export default function BubblePopPage() {
   useEffect(() => {
     soundManager.setFlow(flow);
   }, [flow]);
-
-  const themedPalette = useMemo(() => {
-    switch (mood) {
-      case "sunrise":
-        return sunrisePalette;
-      case "space":
-        return spacePalette;
-      case "forest":
-        return forestPalette;
-      case "arctic":
-        return arcticPalette;
-      case "warm":
-        return warmPalette;
-      default:
-        return sunrisePalette;
-    }
-  }, [mood]);
-
-  const handleMoodChange = useCallback((next: Mood) => {
-    setMood(next);
-    setShowThemeOverlay(true);
-    setTimeout(() => setShowThemeOverlay(false), 500);
-  }, []);
 
   const handleScoreChange = useCallback((delta: number) => {
     setScore((prev) => {
@@ -75,23 +51,8 @@ export default function BubblePopPage() {
     });
   }, []);
 
-  const themeClass = useMemo(() => {
-    switch (mood) {
-      case "sunrise":
-        return styles.themeSunrise;
-      case "space":
-        return styles.themeSpace;
-      case "forest":
-        return styles.themeForest;
-      case "arctic":
-        return styles.themeArctic;
-      case "warm":
-        return styles.themeWarm;
-    }
-  }, [mood]);
-
   return (
-    <div className={`${styles.page} ${themeClass}`}>
+    <div className={styles.page}>
       <div className={styles.backgroundGlow} aria-hidden="true" />
       <div className={styles.starField} aria-hidden="true" />
 
@@ -108,12 +69,13 @@ export default function BubblePopPage() {
           </div>
           <div className={styles.controlsBlock}>
             <ScorePanel score={score} highScore={highScore} />
+            <AmbientSelector />
             <SoundToggle />
           </div>
         </div>
       </nav>
 
-      {/* Flow toggle */}
+      {/* Flow toggle button */}
       <button
         type="button"
         className={styles.flowToggle}
@@ -123,29 +85,11 @@ export default function BubblePopPage() {
         {flow ? "Exit Flow" : "Flow Mode"}
       </button>
 
-      {/* Theme overlay fade */}
-      <div
-        className={`${styles.themeOverlay} ${showThemeOverlay ? styles.themeOverlayVisible : ""}`}
-        aria-hidden
-        style={{ background: mood === "space" ? "rgba(88, 66, 255, 0.12)" : mood === "forest" ? "rgba(94, 179, 126, 0.12)" : mood === "arctic" ? "rgba(173, 232, 244, 0.12)" : mood === "warm" ? "rgba(248, 145, 145, 0.12)" : "rgba(255, 204, 153, 0.12)" }}
-      />
-
-      {/* Mood decorations (hidden in Flow Mode) */}
-      {!flow && <Decorations mood={mood} />}
-
-      {/* Mood bar (hidden in flow to reduce UI) */}
-      {!flow && (
-        <div className={styles.moodBar} role="group" aria-label="Select mood">
-          <button className={styles.moodButton} aria-pressed={mood === "sunrise"} onClick={() => handleMoodChange("sunrise")}>🌅 Sunrise</button>
-          <button className={styles.moodButton} aria-pressed={mood === "space"} onClick={() => handleMoodChange("space")}>🌌 Space</button>
-          <button className={styles.moodButton} aria-pressed={mood === "forest"} onClick={() => handleMoodChange("forest")}>🌿 Forest</button>
-          <button className={styles.moodButton} aria-pressed={mood === "arctic"} onClick={() => handleMoodChange("arctic")}>❄ Arctic</button>
-          <button className={styles.moodButton} aria-pressed={mood === "warm"} onClick={() => handleMoodChange("warm")}>🔥 Warm</button>
-        </div>
-      )}
+      {/* Flow overlay */}
+      {flow && <div className={styles.flowOverlay} aria-hidden="true" />}
 
       <section className={styles.playfield}>
-        <BubbleField bubbleColors={themedPalette} onScoreChange={handleScoreChange} flow={flow} />
+        <BubbleField bubbleColors={pastelPalette} onScoreChange={handleScoreChange} flow={flow} />
       </section>
     </div>
   );
