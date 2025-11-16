@@ -60,6 +60,12 @@ $star-color: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(6px);
 }
 
+@media (max-width: 640px) {
+  .navBar {
+    padding: 12px 12px;
+  }
+}
+
 .brandBlock {
   display: flex;
   flex-direction: column;
@@ -186,6 +192,13 @@ $star-color: rgba(255, 255, 255, 0.25);
   font-weight: 500;
   transition: transform 0.25s ease, border-color 0.25s ease,
     background 0.25s ease;
+  min-height: 44px; // mobile-friendly target
+}
+
+@media (max-width: 640px) {
+  .soundToggle {
+    padding: 0.6rem 1.3rem;
+  }
 }
 
 .soundToggle:hover,
@@ -249,5 +262,8 @@ $star-color: rgba(255, 255, 255, 0.25);
     border-radius: 0;
     padding: 0;
     min-height: 100vh;
+  }
+  .scoreValue {
+    font-size: 1.2rem;
   }
 }

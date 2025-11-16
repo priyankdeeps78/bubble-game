@@ -46,18 +46,20 @@ export function BubbleField({ bubbleColors, onScoreChange }: BubbleFieldProps) {
   const bubbleCount = useMemo(() => {
     if (!bounds) return 60;
     const area = bounds.width * bounds.height;
-    // Roughly 1 bubble per 18-22k px², clamp for sanity
+    const isMobile = bounds.width < 640;
+    // Fewer bubbles per area on mobile to keep 60 FPS
+    const divisor = isMobile ? 26000 : 20000;
     return Math.min(
       MAX_BUBBLES,
-      Math.max(35, Math.round(area / 20000))
+      Math.max(25, Math.round(area / divisor))
     );
   }, [bounds]);
 
   const sizeRange: SizeRange = useMemo(() => {
     if (!bounds) return { min: 20, max: 180 };
     const isMobile = bounds.width < 640;
-    // Allow tiny (12px) up to very big (240-280px)
-    return isMobile ? { min: 18, max: 260 } : { min: 12, max: 240 };
+    // Larger minimum size on mobile for easier tapping
+    return isMobile ? { min: 28, max: 260 } : { min: 12, max: 240 };
   }, [bounds]);
 
   const createBubble = useCallback((): BubbleInstance | null => {
