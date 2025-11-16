@@ -39,7 +39,7 @@ export default function BubblePopPage() {
 
   // Dense fill based on area, clamped
   const baseFireflies = Math.round((vw * vh) / 4500);
-  const fireflyCount = Math.min(840, Math.max(240, baseFireflies * 2));
+  const fireflyCount = Math.min(1200, Math.max(360, baseFireflies * 3));
 
   useEffect(() => {
     try {
