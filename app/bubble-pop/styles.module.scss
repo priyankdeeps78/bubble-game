@@ -463,3 +463,104 @@ $star-color: rgba(255, 255, 255, 0.25);
   color: #fff;
   backdrop-filter: blur(6px);
 }
+
+.decorations {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Sunrise / Warm */
+.sun {
+  position: absolute;
+  top: 8%;
+  right: 12%;
+  width: 140px;
+  height: 140px;
+  border-radius: 999px;
+  background: radial-gradient(circle, #fff4d6 0%, #ffd9a0 60%, rgba(255, 217, 160, 0) 70%);
+  filter: blur(2px);
+  animation: sunPulse 8s ease-in-out infinite;
+}
+@keyframes sunPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+
+.cloud {
+  position: absolute;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,255,255,0.8));
+  filter: blur(1px);
+  border-radius: 60px;
+  opacity: 0.85;
+  animation: cloudDrift 38s linear infinite;
+}
+.cloudOne { top: 16%; left: 8%; width: 180px; height: 70px; animation-duration: 42s; }
+.cloudTwo { top: 24%; left: 30%; width: 220px; height: 80px; animation-duration: 48s; }
+.cloudThree { top: 10%; left: 55%; width: 160px; height: 60px; animation-duration: 40s; }
+@keyframes cloudDrift { from { transform: translateX(-10vw); } to { transform: translateX(10vw); } }
+
+/* Space */
+.planet {
+  position: absolute;
+  top: 22%;
+  left: 12%;
+  width: 110px;
+  height: 110px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 30%, #ff87ff, #7b5cff 60%, #2c1d84 100%);
+  box-shadow: 0 0 40px rgba(124, 96, 255, 0.6);
+  animation: planetFloat 18s ease-in-out infinite;
+}
+.planetSmall { top: 12%; left: 28%; width: 54px; height: 54px; animation-duration: 14s; }
+.nebulaGlow { position: absolute; inset: 0; background: radial-gradient(circle at 20% 15%, rgba(140,110,255,0.15), transparent 50%); }
+@keyframes planetFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+/* Forest */
+.tree {
+  position: absolute;
+  bottom: 12%;
+  width: 0;
+  height: 0;
+  border-left: 24px solid transparent;
+  border-right: 24px solid transparent;
+  border-bottom: 60px solid #2d5a3a;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.35));
+}
+.tree:after {
+  content: "";
+  position: absolute;
+  left: -4px;
+  bottom: -70px;
+  width: 8px;
+  height: 20px;
+  background: #5b4636;
+}
+.treeLeft { left: 8%; }
+.treeRight { right: 10%; }
+.leaf {
+  position: absolute;
+  width: 10px;
+  height: 6px;
+  border-radius: 10px;
+  background: #a5d6a7;
+  box-shadow: 0 0 8px rgba(165,214,167,0.6);
+  animation: leafFloat 10s ease-in-out infinite;
+}
+.leafOne { top: 18%; left: 20%; animation-duration: 11s; }
+.leafTwo { top: 26%; left: 36%; animation-duration: 9s; }
+.leafThree { top: 14%; left: 62%; animation-duration: 12s; }
+@keyframes leafFloat { 0%,100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(8px) rotate(6deg); } }
+
+/* Arctic */
+.snow {
+  position: absolute;
+  top: -20px;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 10px rgba(255,255,255,0.75);
+  animation-name: snowFall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes snowFall { from { transform: translateY(-10px); } to { transform: translateY(110vh); } }

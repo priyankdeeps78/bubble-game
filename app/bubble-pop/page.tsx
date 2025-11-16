@@ -6,6 +6,7 @@ import { BubbleField } from "./components/BubbleField";
 import { SoundToggle } from "./components/SoundToggle";
 import { ScorePanel } from "./components/ScorePanel";
 import { soundManager } from "./utils/soundManager";
+import { Decorations } from "./components/Decorations";
 
 const sunrisePalette = ["#ffd6d1", "#ffc8a2", "#ffe6b3", "#ffb3c1", "#ffe0c2"]; // Calm Sunrise
 const spacePalette = ["#a38cff", "#7b6cff", "#4f3fcf", "#b096ff", "#9f86ff"]; // Deep Space Zen
@@ -128,6 +129,9 @@ export default function BubblePopPage() {
         aria-hidden
         style={{ background: mood === "space" ? "rgba(88, 66, 255, 0.12)" : mood === "forest" ? "rgba(94, 179, 126, 0.12)" : mood === "arctic" ? "rgba(173, 232, 244, 0.12)" : mood === "warm" ? "rgba(248, 145, 145, 0.12)" : "rgba(255, 204, 153, 0.12)" }}
       />
+
+      {/* Mood decorations (hidden in Flow Mode) */}
+      {!flow && <Decorations mood={mood} />}
 
       {/* Mood bar (hidden in flow to reduce UI) */}
       {!flow && (
