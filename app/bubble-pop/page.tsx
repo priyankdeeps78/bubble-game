@@ -25,6 +25,15 @@ export default function BubblePopPage() {
   const [highScore, setHighScore] = useState(0);
   const [flow, setFlow] = useState(false);
   const [night, setNight] = useState(false);
+  const [vw, setVw] = useState<number>(typeof window !== "undefined" ? window.innerWidth : 1200);
+
+  useEffect(() => {
+    const onResize = () => setVw(window.innerWidth);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  const fireflyCount = vw >= 1200 ? 96 : vw >= 768 ? 72 : 48;
 
   useEffect(() => {
     try {
@@ -93,7 +102,7 @@ export default function BubblePopPage() {
 
       {/* Overlays */}
       {flow && <div className={styles.flowOverlay} aria-hidden="true" />}
-      {night && !flow && <Fireflies enabled count={36} />}
+      {night && !flow && <Fireflies enabled count={fireflyCount} />}
 
       <section className={styles.playfield}>
         <BubbleField bubbleColors={pastelPalette} onScoreChange={handleScoreChange} flow={flow} />
