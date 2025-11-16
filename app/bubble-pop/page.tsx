@@ -26,14 +26,19 @@ export default function BubblePopPage() {
   const [flow, setFlow] = useState(false);
   const [night, setNight] = useState(false);
   const [vw, setVw] = useState<number>(typeof window !== "undefined" ? window.innerWidth : 1200);
+  const [vh, setVh] = useState<number>(typeof window !== "undefined" ? window.innerHeight : 800);
 
   useEffect(() => {
-    const onResize = () => setVw(window.innerWidth);
+    const onResize = () => {
+      setVw(window.innerWidth);
+      setVh(window.innerHeight);
+    };
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  const fireflyCount = vw >= 1200 ? 96 : vw >= 768 ? 72 : 48;
+  // Dense fill based on area, clamped
+  const fireflyCount = Math.min(260, Math.max(72, Math.round((vw * vh) / 7000)));
 
   useEffect(() => {
     try {
