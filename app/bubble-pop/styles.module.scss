@@ -8,6 +8,24 @@ $star-color: rgba(255, 255, 255, 0.25);
   overflow: hidden;
   background: $page-gradient;
   color: #f7f7ff;
+  --nav-height: 88px; /* more top/bottom space by default */
+}
+
+.night {
+  background: radial-gradient(circle at 50% -20%, #0b0f27 0%, #070a1a 55%, #040615 100%);
+}
+
+@media (min-width: 640px) {
+  .page {
+    --nav-height: 100px; /* larger on wider screens */
+  }
+}
+
+/* Super short viewports (mobile landscape): shrink nav height */
+@media (max-height: 540px) {
+  .page {
+    --nav-height: 68px;
+  }
 }
 
 .backgroundGlow {
@@ -32,24 +50,143 @@ $star-color: rgba(255, 255, 255, 0.25);
   pointer-events: none;
 }
 
+.navBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  min-height: var(--nav-height); /* let padding add breathing room */
+  padding: 18px 14px; /* more top/bottom, modest sides */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  z-index: 3;
+  background: linear-gradient(
+    to bottom,
+    rgba(8, 11, 27, 0.9),
+    rgba(8, 11, 27, 0.55),
+    rgba(8, 11, 27, 0)
+  );
+  backdrop-filter: blur(8px);
+}
+
+.navContent {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  align-items: flex-start; /* allow multi-line blocks and top spacing */
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.brandBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.brandTagline {
+  font-size: 0.7rem;
+  letter-spacing: 0.28em;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.brandTitle {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.brandDescription {
+  margin-top: 4px;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.infoBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: 40ch;
+}
+
+.infoTitle {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.infoText {
+  font-size: 0.8rem;
+  line-height: 1.25rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.controlsBlock {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Mobile tweaks */
+@media (max-width: 480px) {
+  .navBar {
+    padding: 12px 10px;
+  }
+  .navContent {
+    gap: 10px;
+  }
+  .brandTagline {
+    letter-spacing: 0.22em;
+  }
+  .brandTitle {
+    font-size: 1.05rem;
+    line-height: 1.2;
+  }
+  .brandDescription {
+    display: none; /* hide long line on tiny screens */
+  }
+  .infoBlock {
+    display: none; /* collapse right-side info on tiny screens */
+  }
+  .controlsBlock {
+    gap: 8px;
+  }
+  .scorePanel {
+    padding: 0.3rem 0.7rem;
+  }
+  .scoreValue {
+    font-size: 1rem;
+  }
+  .soundToggle {
+    padding: 0.35rem 0.8rem;
+  }
+}
+
 .playfield {
-  position: relative;
-  flex: 1;
-  min-height: 60vh;
-  border-radius: 28px;
-  padding: clamp(0.5rem, 2vw, 1.5rem);
-  background: rgba(7, 10, 24, 0.35);
-  box-shadow: inset 0 0 60px rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  position: fixed;
+  top: var(--nav-height);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
   overflow: hidden;
+  z-index: 2;
 }
 
 .fieldSurface {
-  position: relative;
-  width: 100%;
-  height: min(70vh, 700px);
-  min-height: 420px;
-  border-radius: 24px;
+  position: fixed;
+  top: var(--nav-height);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: calc(100vh - var(--nav-height));
+  border-radius: 0;
   overflow: hidden;
 }
 
@@ -99,6 +236,34 @@ $star-color: rgba(255, 255, 255, 0.25);
     floatUp var(--float-duration, 16s) linear infinite,
     sway var(--sway-duration, 6s) ease-in-out infinite;
   transform-origin: center;
+  overflow: hidden; /* contain inner layers */
+}
+
+.bubbleInner {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), rgba(255,255,255,0) 65%), var(--bubble-color, rgba(255,255,255,0.35));
+}
+
+.bubbleHalo {
+  position: absolute;
+  inset: -10%;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(255,255,255,0.5), rgba(255,255,255,0) 55%);
+  mix-blend-mode: screen;
+  filter: blur(2px);
+}
+
+.glimmer {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: white;
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.9), 0 0 28px rgba(255, 255, 255, 0.6);
+  pointer-events: none;
 }
 
 .bubble[data-danger="true"] {
@@ -202,8 +367,52 @@ $star-color: rgba(255, 255, 255, 0.25);
 
 @media (max-width: 640px) {
   .playfield {
-    border-radius: 20px;
-    padding: 0.5rem;
-    min-height: 65vh;
+    border-radius: 0;
+    padding: 0;
+    min-height: 100vh;
   }
+}
+
+.flowOverlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(255, 220, 180, 0.08), transparent 60%);
+  backdrop-filter: blur(6px);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.navHidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.flowToggle {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 5;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(12, 16, 32, 0.6);
+  color: #fff;
+  backdrop-filter: blur(6px);
+}
+
+.firefliesLayer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.firefly {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255,255,200,0.95), rgba(255,255,160,0.2) 70%, rgba(255,255,160,0) 80%);
+  box-shadow: 0 0 10px rgba(255,255,180,0.7);
 }

@@ -49,6 +49,26 @@ export function Bubble({ data, onPopStart, onPopComplete }: BubbleProps) {
     }
   }, [data.id, isPopping, onPopComplete]);
 
+  const animateValue = isPopping
+    ? data.isDanger
+      ? {
+          x: [0, -8, 8, -6, 6, -3, 3, 0],
+          scale: [1, 1.06, 1.06, 1.02, 1, 0.15],
+          opacity: [data.opacity, data.opacity, data.opacity, data.opacity, 1, 0],
+        }
+      : { scale: 0.15, opacity: 0 }
+    : { scale: 1, opacity: data.opacity };
+
+  const transitionValue = isPopping
+    ? data.isDanger
+      ? {
+          duration: 0.45,
+          ease: [0.16, 1, 0.3, 1] as const,
+          times: [0, 0.15, 0.3, 0.45, 0.6, 1],
+        }
+      : { duration: 0.18, ease: [0.2, 0.8, 0.2, 1] as const }
+    : { duration: data.floatDuration, ease: [0, 0, 1, 1] as const };
+
   return (
     <motion.button
       type="button"
@@ -63,18 +83,36 @@ export function Bubble({ data, onPopStart, onPopComplete }: BubbleProps) {
         }
       }}
       style={bubbleStyle}
-      animate={
-        isPopping
-          ? { scale: 0.15, opacity: 0 }
-          : { scale: 1, opacity: data.opacity }
-      }
-      transition={{
-        duration: isPopping ? 0.18 : data.floatDuration,
-        ease: isPopping ? [0.2, 0.8, 0.2, 1] : "linear",
-      }}
+      animate={animateValue}
+      transition={transitionValue}
       onAnimationComplete={handleComplete}
       whileHover={isPopping ? undefined : { scale: 1.05 }}
       whileTap={{ scale: 0.9 }}
-    />
+    >
+      {/* Inner layer collapses fast */}
+      <motion.span
+        className={styles.bubbleInner}
+        initial={false}
+        animate={isPopping ? { scale: 0, opacity: 0 } : { scale: 1, opacity: 1 }}
+        transition={isPopping ? { duration: 0.16, ease: [0.2, 0.8, 0.2, 1] as const } : { duration: 0 }}
+      />
+      {/* Outer halo expands and fades */}
+      <motion.span
+        className={styles.bubbleHalo}
+        initial={false}
+        animate={isPopping ? { scale: 1.8, opacity: 0 } : { scale: 1, opacity: 0 }}
+        transition={isPopping ? { duration: 0.28, ease: [0.2, 0.8, 0.2, 1] as const } : { duration: 0 }}
+      />
+      {/* Tiny glimmer at highlight spot when popping */}
+      {isPopping ? (
+        <motion.span
+          className={styles.glimmer}
+          style={{ left: "28%", top: "24%" }}
+          initial={{ opacity: 0, scale: 0.4, rotate: 0 }}
+          animate={{ opacity: [0, 1, 0], scale: [0.4, 1.1, 0.2], rotate: [0, 25, -10] }}
+          transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+        />
+      ) : null}
+    </motion.button>
   );
 }
