@@ -48,20 +48,20 @@ export default function BubblePopPage() {
       <div className={styles.backgroundGlow} aria-hidden="true" />
       <div className={styles.starField} aria-hidden="true" />
 
-      <section className={styles.playfield}>
-        <BubbleField bubbleColors={pastelPalette} onScoreChange={handleScoreChange} />
-      </section>
-
-      <div style={{ position: "fixed", top: 16, left: 16, right: 16, zIndex: 3, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-        <div style={{ display: "flex", flexDirection: "column" }}>
+      <nav className={styles.navBar} aria-label="Primary">
+        <div className={styles.brandBlock}>
           <p className="text-xs uppercase tracking-[0.4em] text-white/70">Bubble Pop Universe</p>
           <h1 className="text-2xl font-semibold text-white">Relax Mode</h1>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <div className={styles.controlsBlock}>
           <ScorePanel score={score} highScore={highScore} />
           <SoundToggle />
         </div>
-      </div>
+      </nav>
+
+      <section className={styles.playfield}>
+        <BubbleField bubbleColors={pastelPalette} onScoreChange={handleScoreChange} />
+      </section>
     </div>
   );
 }

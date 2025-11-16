@@ -8,6 +8,13 @@ $star-color: rgba(255, 255, 255, 0.25);
   overflow: hidden;
   background: $page-gradient;
   color: #f7f7ff;
+  --nav-height: 72px;
+}
+
+@media (min-width: 640px) {
+  .page {
+    --nav-height: 80px;
+  }
 }
 
 .backgroundGlow {
@@ -32,9 +39,44 @@ $star-color: rgba(255, 255, 255, 0.25);
   pointer-events: none;
 }
 
+.navBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--nav-height);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  z-index: 3;
+  background: linear-gradient(
+    to bottom,
+    rgba(8, 11, 27, 0.85),
+    rgba(8, 11, 27, 0.55),
+    rgba(8, 11, 27, 0)
+  );
+  backdrop-filter: blur(6px);
+}
+
+.brandBlock {
+  display: flex;
+  flex-direction: column;
+}
+
+.controlsBlock {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .playfield {
   position: fixed;
-  inset: 0;
+  top: var(--nav-height);
+  left: 0;
+  right: 0;
+  bottom: 0;
   padding: 0;
   background: transparent;
   border: 0;
@@ -45,9 +87,12 @@ $star-color: rgba(255, 255, 255, 0.25);
 
 .fieldSurface {
   position: fixed;
-  inset: 0;
+  top: var(--nav-height);
+  left: 0;
+  right: 0;
+  bottom: 0;
   width: 100vw;
-  height: 100vh;
+  height: calc(100vh - var(--nav-height));
   border-radius: 0;
   overflow: hidden;
 }
