@@ -16,35 +16,23 @@ const pastelPalette = [
   "#ffd6e0",
 ];
 
-const warmPalette = [
-  "#ffd1c1",
-  "#ffedc2",
-  "#ffe0b5",
-  "#ffc6c7",
-  "#ffd8a8",
-  "#ffd1e8",
-];
-
 const SCORE_KEY = "bubble-pop-high-score";
 
 export default function BubblePopPage() {
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
-  const [flowMode, setFlowMode] = useState(false);
+  const [flow, setFlow] = useState(false);
 
   useEffect(() => {
     try {
       const stored = Number(localStorage.getItem(SCORE_KEY));
-      if (!Number.isNaN(stored)) {
-        setHighScore(stored);
-      }
+      if (!Number.isNaN(stored)) setHighScore(stored);
     } catch {}
   }, []);
 
   useEffect(() => {
-    // Adjust ambient intensity in Flow Mode
-    soundManager.setAmbientIntensity(flowMode ? 0.16 : 0.1);
-  }, [flowMode]);
+    soundManager.setFlow(flow);
+  }, [flow]);
 
   const handleScoreChange = useCallback((delta: number) => {
     setScore((prev) => {
@@ -63,47 +51,43 @@ export default function BubblePopPage() {
   }, []);
 
   return (
-    <div className={`${styles.page} ${flowMode ? styles.flowing : ""}`}>
+    <div className={styles.page}>
       <div className={styles.backgroundGlow} aria-hidden="true" />
       <div className={styles.starField} aria-hidden="true" />
-      {flowMode && <div className={styles.flowBlur} aria-hidden="true" />}
 
-      {!flowMode && (
-        <nav className={styles.navBar} aria-label="Primary">
-          <div className={styles.navContent}>
-            <div className={styles.brandBlock}>
-              <p className={styles.brandTagline}>Bubble Pop Universe</p>
-              <h1 className={styles.brandTitle}>Relax Mode</h1>
-              <p className={styles.brandDescription}>Pop, breathe, repeat — bigger bubbles reward more, red ones bite softly.</p>
-            </div>
-            <div className={styles.infoBlock}>
-              <p className={styles.infoTitle}>Why play?</p>
-              <p className={styles.infoText}>A tiny break for your brain. Gentle motion, soft sound, and satisfying pops help reset focus in 30–60 seconds.</p>
-            </div>
-            <div className={styles.controlsBlock}>
-              <ScorePanel score={score} highScore={highScore} />
-              <SoundToggle />
-            </div>
+      <nav className={`${styles.navBar} ${flow ? styles.navHidden : ""}`} aria-label="Primary">
+        <div className={styles.navContent}>
+          <div className={styles.brandBlock}>
+            <p className={styles.brandTagline}>Bubble Pop Universe</p>
+            <h1 className={styles.brandTitle}>Relax Mode</h1>
+            <p className={styles.brandDescription}>Pop, breathe, repeat — bigger bubbles reward more, red ones bite softly.</p>
           </div>
-        </nav>
-      )}
+          <div className={styles.infoBlock}>
+            <p className={styles.infoTitle}>Why play?</p>
+            <p className={styles.infoText}>A tiny break for your brain. Gentle motion, soft sound, and satisfying pops help reset focus in 30–60 seconds.</p>
+          </div>
+          <div className={styles.controlsBlock}>
+            <ScorePanel score={score} highScore={highScore} />
+            <SoundToggle />
+          </div>
+        </div>
+      </nav>
 
-      {/* Minimal Flow toggle */}
+      {/* Flow toggle button */}
       <button
         type="button"
         className={styles.flowToggle}
-        aria-pressed={flowMode}
-        onClick={() => setFlowMode((v) => !v)}
+        onClick={() => setFlow((f) => !f)}
+        aria-pressed={flow}
       >
-        {flowMode ? "Exit Flow Mode" : "Flow Mode"}
+        {flow ? "Exit Flow" : "Flow Mode"}
       </button>
 
+      {/* Flow overlay */}
+      {flow && <div className={styles.flowOverlay} aria-hidden="true" />}
+
       <section className={styles.playfield}>
-        <BubbleField
-          bubbleColors={flowMode ? warmPalette : pastelPalette}
-          onScoreChange={handleScoreChange}
-          flowMode={flowMode}
-        />
+        <BubbleField bubbleColors={pastelPalette} onScoreChange={handleScoreChange} flow={flow} />
       </section>
     </div>
   );

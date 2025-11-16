@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useMemo } from "react";
 import styles from "../styles.module.scss";
 import type { BurstInstance } from "../types";
-import { randomBetweenFloat, randomPastel } from "../utils/random";
+import { randomBetweenFloat, randomPastel, randomWarmPastel } from "../utils/random";
 
 type Particle = {
   id: string;
@@ -15,28 +15,28 @@ type Particle = {
   color: string;
 };
 
-export function ParticleBurst({ burst }: { burst: BurstInstance }) {
+export function ParticleBurst({ burst, flow = false }: { burst: BurstInstance; flow?: boolean }) {
   // Normalized size factor: ~1.0 around 60px bubbles, larger > 1, tiny < 1
   const magnitude = Math.max(0.6, Math.min(3, burst.size / 60));
 
   const particles = useMemo<Particle[]>(() => {
-    const baseCount = randomBetweenFloat(6, 10);
+    const baseCount = randomBetweenFloat(6, 10) * (flow ? 0.9 : 1);
     const count = Math.floor(baseCount * (0.8 + magnitude * 0.6));
     return Array.from({ length: count }, (_, index) => {
       const angle = randomBetweenFloat(0, Math.PI * 2);
-      const distance = randomBetweenFloat(28, 70) * (0.8 + magnitude * 0.8);
+      const distance = (randomBetweenFloat(28, 70) * (0.8 + magnitude * 0.8)) * (flow ? 0.85 : 1);
       return {
         id: `${burst.id}-p-${index}`,
         dx: Math.cos(angle) * distance,
         dy: Math.sin(angle) * distance,
         delay: randomBetweenFloat(0, 0.05 * Math.min(1.5, magnitude)),
         size: randomBetweenFloat(3, 8) * (0.8 + magnitude * 0.5),
-        color: randomPastel(),
+        color: flow ? randomWarmPastel() : randomPastel(),
       };
     });
-  }, [burst.id, magnitude]);
+  }, [burst.id, magnitude, flow]);
 
-  const duration = Math.min(0.65, 0.35 + magnitude * 0.15);
+  const duration = Math.min(0.65, 0.35 + magnitude * 0.15) * (flow ? 1.05 : 1);
 
   return (
     <div

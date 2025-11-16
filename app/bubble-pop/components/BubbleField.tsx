@@ -17,7 +17,7 @@ const FALLBACK_COLOR = "hsla(200, 70%, 80%, 0.7)";
 export type BubbleFieldProps = {
   bubbleColors?: string[];
   onScoreChange?: (delta: number) => void;
-  flowMode?: boolean;
+  flow?: boolean;
 };
 
 type SizeRange = {
@@ -25,14 +25,26 @@ type SizeRange = {
   max: number;
 };
 
-export function BubbleField({ bubbleColors, onScoreChange, flowMode = false }: BubbleFieldProps) {
+export function BubbleField({ bubbleColors, onScoreChange, flow = false }: BubbleFieldProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const timeouts = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
   const [bounds, setBounds] = useState<{ width: number; height: number } | null>(null);
   const [bubbles, setBubbles] = useState<BubbleInstance[]>([]);
   const [bursts, setBursts] = useState<BurstInstance[]>([]);
 
-  const palette = useMemo(() => (bubbleColors?.length ? bubbleColors : undefined), [bubbleColors]);
+  const warmPalette = [
+    "#ffd1c1",
+    "#ffd6a5",
+    "#ffcad4",
+    "#ffadad",
+    "#ffe5b4",
+    "#ffc6c7",
+  ];
+
+  const palette = useMemo(() => {
+    if (flow) return warmPalette;
+    return bubbleColors?.length ? bubbleColors : undefined;
+  }, [bubbleColors, flow]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -72,11 +84,11 @@ export function BubbleField({ bubbleColors, onScoreChange, flowMode = false }: B
       : palette
         ? palette[randomInt(0, palette.length - 1)]
         : FALLBACK_COLOR;
-    // Speed profile
-    const floatDuration = flowMode ? randomBetweenFloat(9, 18) : randomBetweenFloat(4.5, 10.5);
-    const swayDuration = flowMode ? randomBetweenFloat(5.5, 9) : randomBetweenFloat(3, 6);
-    const driftX = flowMode ? randomBetweenFloat(-25, 25) : randomBetweenFloat(-45, 45);
-    // Size-based scoring (unchanged)
+    // Speed control
+    const floatDuration = (flow ? 1.6 : 1) * randomBetweenFloat(4.5, 10.5);
+    const swayDuration = (flow ? 1.3 : 1) * randomBetweenFloat(3, 6);
+    const driftX = (flow ? 0.6 : 1) * randomBetweenFloat(-45, 45);
+    // Size-based scoring
     const basePoints = Math.max(1, Math.round(size / 7));
     const points = isDanger ? -basePoints * 8 : basePoints;
 
@@ -94,7 +106,7 @@ export function BubbleField({ bubbleColors, onScoreChange, flowMode = false }: B
       isDanger,
       points,
     };
-  }, [bounds, palette, sizeRange.max, sizeRange.min, flowMode]);
+  }, [bounds, palette, sizeRange.max, sizeRange.min, flow]);
 
   useEffect(() => {
     if (!bounds) return;
@@ -174,12 +186,11 @@ export function BubbleField({ bubbleColors, onScoreChange, flowMode = false }: B
               data={bubble}
               onPopStart={handlePopStart}
               onPopComplete={handlePopComplete}
-              gentlePop={flowMode}
             />
           ))}
         </AnimatePresence>
         {bursts.map((burst) => (
-          <ParticleBurst key={burst.id} burst={burst} />
+          <ParticleBurst key={burst.id} burst={burst} flow={flow} />
         ))}
       </div>
     </div>

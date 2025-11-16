@@ -10,10 +10,9 @@ export type BubbleProps = {
   data: BubbleInstance;
   onPopStart: (bubble: BubbleInstance) => void;
   onPopComplete: (id: string) => void;
-  gentlePop?: boolean;
 };
 
-export function Bubble({ data, onPopStart, onPopComplete, gentlePop = false }: BubbleProps) {
+export function Bubble({ data, onPopStart, onPopComplete }: BubbleProps) {
   const [isPopping, setIsPopping] = useState(false);
 
   const bubbleStyle = useMemo(
@@ -57,9 +56,7 @@ export function Bubble({ data, onPopStart, onPopComplete, gentlePop = false }: B
           scale: [1, 1.06, 1.06, 1.02, 1, 0.15],
           opacity: [data.opacity, data.opacity, data.opacity, data.opacity, 1, 0],
         }
-      : gentlePop
-        ? { scale: [1, 0.95, 0.85, 0.7], opacity: [data.opacity, 0.9, 0.5, 0] }
-        : { scale: 0.15, opacity: 0 }
+      : { scale: 0.15, opacity: 0 }
     : { scale: 1, opacity: data.opacity };
 
   const transitionValue = isPopping
@@ -69,9 +66,7 @@ export function Bubble({ data, onPopStart, onPopComplete, gentlePop = false }: B
           ease: [0.16, 1, 0.3, 1] as const,
           times: [0, 0.15, 0.3, 0.45, 0.6, 1],
         }
-      : gentlePop
-        ? { duration: 0.28, ease: [0.22, 0.66, 0.24, 0.98] as const }
-        : { duration: 0.18, ease: [0.2, 0.8, 0.2, 1] as const }
+      : { duration: 0.18, ease: [0.2, 0.8, 0.2, 1] as const }
     : { duration: data.floatDuration, ease: [0, 0, 1, 1] as const };
 
   return (
@@ -91,22 +86,22 @@ export function Bubble({ data, onPopStart, onPopComplete, gentlePop = false }: B
       animate={animateValue}
       transition={transitionValue}
       onAnimationComplete={handleComplete}
-      whileHover={isPopping ? undefined : { scale: gentlePop ? 1.02 : 1.05 }}
-      whileTap={{ scale: gentlePop ? 0.95 : 0.9 }}
+      whileHover={isPopping ? undefined : { scale: 1.05 }}
+      whileTap={{ scale: 0.9 }}
     >
       {/* Inner layer collapses fast */}
       <motion.span
         className={styles.bubbleInner}
         initial={false}
-        animate={isPopping ? { scale: gentlePop ? 0.3 : 0, opacity: 0 } : { scale: 1, opacity: 1 }}
-        transition={isPopping ? { duration: gentlePop ? 0.22 : 0.16, ease: [0.2, 0.8, 0.2, 1] as const } : { duration: 0 }}
+        animate={isPopping ? { scale: 0, opacity: 0 } : { scale: 1, opacity: 1 }}
+        transition={isPopping ? { duration: 0.16, ease: [0.2, 0.8, 0.2, 1] as const } : { duration: 0 }}
       />
       {/* Outer halo expands and fades */}
       <motion.span
         className={styles.bubbleHalo}
         initial={false}
-        animate={isPopping ? { scale: gentlePop ? 1.4 : 1.8, opacity: 0 } : { scale: 1, opacity: 0 }}
-        transition={isPopping ? { duration: gentlePop ? 0.34 : 0.28, ease: [0.2, 0.8, 0.2, 1] as const } : { duration: 0 }}
+        animate={isPopping ? { scale: 1.8, opacity: 0 } : { scale: 1, opacity: 0 }}
+        transition={isPopping ? { duration: 0.28, ease: [0.2, 0.8, 0.2, 1] as const } : { duration: 0 }}
       />
       {/* Tiny glimmer at highlight spot when popping */}
       {isPopping ? (

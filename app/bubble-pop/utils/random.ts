@@ -10,6 +10,20 @@ export const randomPastel = () => {
   return `hsl(${hue} ${saturation}% ${lightness}%)`;
 };
 
+export const randomWarmPastel = () => {
+  // Prefer reds/oranges/pinks: 350-20 and 20-60 ranges
+  const ranges = [
+    [350, 360],
+    [0, 20],
+    [20, 60],
+  ] as const;
+  const r = ranges[randomInt(0, ranges.length - 1)];
+  const hue = r[0] <= r[1] ? randomInt(r[0], r[1]) : randomInt(0, 20);
+  const saturation = randomInt(60, 85);
+  const lightness = randomInt(60, 78);
+  return `hsl(${hue} ${saturation}% ${lightness}%)`;
+};
+
 export const randomId = () =>
   typeof crypto !== "undefined" && crypto.randomUUID
     ? crypto.randomUUID()

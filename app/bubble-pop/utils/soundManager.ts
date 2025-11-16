@@ -10,7 +10,7 @@ class SoundManager {
   private ambient?: Howl;
   private enabled = true;
   private ambientEnabled = true;
-  private ambientBase = 0.1;
+  private flow = false;
 
   setEnabled(nextEnabled: boolean) {
     this.enabled = nextEnabled;
@@ -23,10 +23,10 @@ class SoundManager {
     }
     if (this.ambientEnabled) {
       const ambient = this.ensureAmbient();
-      ambient.volume(this.ambientBase);
       if (!ambient.playing()) {
         ambient.play();
       }
+      this.applyAmbientVolume();
     }
   }
 
@@ -38,17 +38,21 @@ class SoundManager {
     }
     if (!this.enabled) return;
     const ambient = this.ensureAmbient();
-    ambient.volume(this.ambientBase);
     if (!ambient.playing()) {
       ambient.play();
     }
+    this.applyAmbientVolume();
   }
 
-  setAmbientIntensity(volume: number) {
-    this.ambientBase = volume;
-    if (this.ambient) {
-      this.ambient.volume(volume);
-    }
+  setFlow(isFlow: boolean) {
+    this.flow = isFlow;
+    this.applyAmbientVolume();
+  }
+
+  private applyAmbientVolume() {
+    if (!this.ambient) return;
+    const target = this.flow ? 0.14 : 0.1;
+    this.ambient.volume(target);
   }
 
   playPop() {
@@ -56,13 +60,13 @@ class SoundManager {
     const pop = this.ensurePop();
     // Layer 1
     const id1 = pop.play();
-    pop.rate(0.92, id1);
-    pop.volume(0.22, id1);
+    pop.rate(this.flow ? 0.9 : 0.92, id1);
+    pop.volume(this.flow ? 0.16 : 0.22, id1);
     // Layer 2 slight offset
     setTimeout(() => {
       const id2 = pop.play();
-      pop.rate(1.1, id2);
-      pop.volume(0.18, id2);
+      pop.rate(this.flow ? 1.05 : 1.1, id2);
+      pop.volume(this.flow ? 0.12 : 0.18, id2);
     }, 12);
   }
 
@@ -80,7 +84,7 @@ class SoundManager {
     if (!this.ambient) {
       this.ambient = new Howl({
         src: [AMBIENT_SRC],
-        volume: this.ambientBase,
+        volume: 0.1,
         loop: true,
       });
     }
