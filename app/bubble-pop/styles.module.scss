@@ -11,6 +11,10 @@ $star-color: rgba(255, 255, 255, 0.25);
   --nav-height: 88px; /* more top/bottom space by default */
 }
 
+.night {
+  background: radial-gradient(circle at 50% -20%, #0b0f27 0%, #070a1a 55%, #040615 100%);
+}
+
 @media (min-width: 640px) {
   .page {
     --nav-height: 100px; /* larger on wider screens */
@@ -395,4 +399,20 @@ $star-color: rgba(255, 255, 255, 0.25);
   background: rgba(12, 16, 32, 0.6);
   color: #fff;
   backdrop-filter: blur(6px);
+}
+
+.firefliesLayer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.firefly {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255,255,200,0.95), rgba(255,255,160,0.2) 70%, rgba(255,255,160,0) 80%);
+  box-shadow: 0 0 10px rgba(255,255,180,0.7);
 }

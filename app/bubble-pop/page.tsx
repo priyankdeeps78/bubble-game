@@ -7,6 +7,7 @@ import { SoundToggle } from "./components/SoundToggle";
 import { ScorePanel } from "./components/ScorePanel";
 import { soundManager } from "./utils/soundManager";
 import { AmbientSelector } from "./components/AmbientSelector";
+import { Fireflies } from "./components/Fireflies";
 
 const pastelPalette = [
   "#f8b4d9",
@@ -23,6 +24,7 @@ export default function BubblePopPage() {
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
   const [flow, setFlow] = useState(false);
+  const [night, setNight] = useState(false);
 
   useEffect(() => {
     try {
@@ -52,7 +54,7 @@ export default function BubblePopPage() {
   }, []);
 
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} ${night ? styles.night : ""}`}>
       <div className={styles.backgroundGlow} aria-hidden="true" />
       <div className={styles.starField} aria-hidden="true" />
 
@@ -75,18 +77,23 @@ export default function BubblePopPage() {
         </div>
       </nav>
 
-      {/* Flow toggle button */}
+      {/* Toggles */}
+      <button type="button" className={styles.flowToggle} onClick={() => setFlow((f) => !f)} aria-pressed={flow}>
+        {flow ? "Exit Flow" : "Flow Mode"}
+      </button>
       <button
         type="button"
         className={styles.flowToggle}
-        onClick={() => setFlow((f) => !f)}
-        aria-pressed={flow}
+        onClick={() => setNight((n) => !n)}
+        aria-pressed={night}
+        style={{ right: 112 }}
       >
-        {flow ? "Exit Flow" : "Flow Mode"}
+        {night ? "Exit Night" : "Night Mode"}
       </button>
 
-      {/* Flow overlay */}
+      {/* Overlays */}
       {flow && <div className={styles.flowOverlay} aria-hidden="true" />}
+      {night && !flow && <Fireflies enabled count={36} />}
 
       <section className={styles.playfield}>
         <BubbleField bubbleColors={pastelPalette} onScoreChange={handleScoreChange} flow={flow} />

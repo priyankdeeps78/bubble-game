@@ -147,6 +147,10 @@ export function BubbleField({ bubbleColors, onScoreChange, flow = false }: Bubbl
       };
       setBursts((prev) => [...prev, burst]);
       scheduleBurstRemoval(burst.id);
+      // notify fireflies
+      try {
+        window.dispatchEvent(new CustomEvent("bubble-pop", { detail: { x: burst.x, y: burst.y } }));
+      } catch {}
     },
     [bounds, scheduleBurstRemoval],
   );
