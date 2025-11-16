@@ -9,7 +9,7 @@ import { Bubble } from "./Bubble";
 import { maybe, randomBetweenFloat, randomId, randomInt } from "../utils/random";
 import { soundManager } from "../utils/soundManager";
 
-const MAX_BUBBLES = 70;
+const MAX_BUBBLES = 110;
 const BURST_LIFETIME = 450;
 const DANGER_COLOR = "rgba(255, 82, 117, 0.78)";
 const FALLBACK_COLOR = "hsla(200, 70%, 80%, 0.7)";
@@ -27,31 +27,11 @@ type SizeRange = {
 export function BubbleField({ bubbleColors, onScoreChange }: BubbleFieldProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const timeouts = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
-  const [viewportWidth, setViewportWidth] = useState(1200);
   const [bounds, setBounds] = useState<{ width: number; height: number } | null>(null);
   const [bubbles, setBubbles] = useState<BubbleInstance[]>([]);
   const [bursts, setBursts] = useState<BurstInstance[]>([]);
 
   const palette = useMemo(() => (bubbleColors?.length ? bubbleColors : undefined), [bubbleColors]);
-
-  useEffect(() => {
-    const update = () => setViewportWidth(window.innerWidth);
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
-  }, []);
-
-  const bubbleCount = useMemo(() => {
-    if (viewportWidth < 640) return 25;
-    if (viewportWidth < 1024) return 38;
-    return 55;
-  }, [viewportWidth]);
-
-  const sizeRange: SizeRange = useMemo(() => {
-    if (viewportWidth < 640) return { min: 36, max: 120 };
-    if (viewportWidth < 1024) return { min: 26, max: 110 };
-    return { min: 20, max: 100 };
-  }, [viewportWidth]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -62,6 +42,23 @@ export function BubbleField({ bubbleColors, onScoreChange }: BubbleFieldProps) {
     observer.observe(containerRef.current);
     return () => observer.disconnect();
   }, []);
+
+  const bubbleCount = useMemo(() => {
+    if (!bounds) return 60;
+    const area = bounds.width * bounds.height;
+    // Roughly 1 bubble per 18-22k px², clamp for sanity
+    return Math.min(
+      MAX_BUBBLES,
+      Math.max(35, Math.round(area / 20000))
+    );
+  }, [bounds]);
+
+  const sizeRange: SizeRange = useMemo(() => {
+    if (!bounds) return { min: 20, max: 180 };
+    const isMobile = bounds.width < 640;
+    // Allow tiny (12px) up to very big (240-280px)
+    return isMobile ? { min: 18, max: 260 } : { min: 12, max: 240 };
+  }, [bounds]);
 
   const createBubble = useCallback((): BubbleInstance | null => {
     if (!bounds) return null;
@@ -74,18 +71,25 @@ export function BubbleField({ bubbleColors, onScoreChange }: BubbleFieldProps) {
       : palette
         ? palette[randomInt(0, palette.length - 1)]
         : FALLBACK_COLOR;
-    const points = isDanger ? -80 : 10;
+    // Speed up: shorter float durations and stronger horizontal drift
+    const floatDuration = randomBetweenFloat(4.5, 10.5);
+    const swayDuration = randomBetweenFloat(3, 6);
+    const driftX = randomBetweenFloat(-45, 45);
+    // Size-based scoring: bigger = more points, and bigger penalty for danger
+    const basePoints = Math.max(1, Math.round(size / 7));
+    const points = isDanger ? -basePoints * 8 : basePoints;
+
     return {
       id: randomId(),
       size,
       x,
       y,
       color,
-      floatDuration: randomBetweenFloat(8, 18),
-      swayDuration: randomBetweenFloat(4, 7),
-      driftX: randomBetweenFloat(-30, 30),
-      opacity: isDanger ? 0.9 : randomBetweenFloat(0.6, 0.85),
-      blur: isDanger ? 0 : maybe(0.35) ? randomBetweenFloat(0.8, 1.8) : 0,
+      floatDuration,
+      swayDuration,
+      driftX,
+      opacity: isDanger ? 0.92 : randomBetweenFloat(0.6, 0.85),
+      blur: isDanger ? 0 : maybe(0.35) ? randomBetweenFloat(0.6, 1.6) : 0,
       isDanger,
       points,
     };

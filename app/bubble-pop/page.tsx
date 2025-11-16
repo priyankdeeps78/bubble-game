@@ -47,28 +47,21 @@ export default function BubblePopPage() {
     <div className={styles.page}>
       <div className={styles.backgroundGlow} aria-hidden="true" />
       <div className={styles.starField} aria-hidden="true" />
-      <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-6 px-4 pb-10 pt-6 sm:px-10">
-        <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-xs uppercase tracking-[0.4em] text-white/70">
-              Bubble Pop Universe
-            </p>
-            <h1 className="text-3xl font-semibold text-white sm:text-4xl">
-              Relax Mode
-            </h1>
-            <p className="text-sm text-white/70">
-              Tap, click, and breathe. New bubbles appear the instant you pop.
-            </p>
-          </div>
-          <div className="flex flex-col items-end gap-3 sm:flex-row sm:items-center sm:gap-4">
-            <ScorePanel score={score} highScore={highScore} />
-            <SoundToggle />
-          </div>
-        </header>
-        <section className={styles.playfield}>
-          <BubbleField bubbleColors={pastelPalette} onScoreChange={handleScoreChange} />
-        </section>
-      </main>
+
+      <section className={styles.playfield}>
+        <BubbleField bubbleColors={pastelPalette} onScoreChange={handleScoreChange} />
+      </section>
+
+      <div style={{ position: "fixed", top: 16, left: 16, right: 16, zIndex: 3, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <p className="text-xs uppercase tracking-[0.4em] text-white/70">Bubble Pop Universe</p>
+          <h1 className="text-2xl font-semibold text-white">Relax Mode</h1>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <ScorePanel score={score} highScore={highScore} />
+          <SoundToggle />
+        </div>
+      </div>
     </div>
   );
 }
