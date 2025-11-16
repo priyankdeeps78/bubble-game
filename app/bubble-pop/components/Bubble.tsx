@@ -88,6 +88,31 @@ export function Bubble({ data, onPopStart, onPopComplete }: BubbleProps) {
       onAnimationComplete={handleComplete}
       whileHover={isPopping ? undefined : { scale: 1.05 }}
       whileTap={{ scale: 0.9 }}
-    />
+    >
+      {/* Inner layer collapses fast */}
+      <motion.span
+        className={styles.bubbleInner}
+        initial={false}
+        animate={isPopping ? { scale: 0, opacity: 0 } : { scale: 1, opacity: 1 }}
+        transition={isPopping ? { duration: 0.16, ease: [0.2, 0.8, 0.2, 1] as const } : { duration: 0 }}
+      />
+      {/* Outer halo expands and fades */}
+      <motion.span
+        className={styles.bubbleHalo}
+        initial={false}
+        animate={isPopping ? { scale: 1.8, opacity: 0 } : { scale: 1, opacity: 0 }}
+        transition={isPopping ? { duration: 0.28, ease: [0.2, 0.8, 0.2, 1] as const } : { duration: 0 }}
+      />
+      {/* Tiny glimmer at highlight spot when popping */}
+      {isPopping ? (
+        <motion.span
+          className={styles.glimmer}
+          style={{ left: "28%", top: "24%" }}
+          initial={{ opacity: 0, scale: 0.4, rotate: 0 }}
+          animate={{ opacity: [0, 1, 0], scale: [0.4, 1.1, 0.2], rotate: [0, 25, -10] }}
+          transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+        />
+      ) : null}
+    </motion.button>
   );
 }

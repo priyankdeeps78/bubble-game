@@ -46,20 +46,18 @@ export function BubbleField({ bubbleColors, onScoreChange }: BubbleFieldProps) {
   const bubbleCount = useMemo(() => {
     if (!bounds) return 60;
     const area = bounds.width * bounds.height;
-    const isMobile = bounds.width < 640;
-    // Fewer bubbles per area on mobile to keep 60 FPS
-    const divisor = isMobile ? 26000 : 20000;
+    // Roughly 1 bubble per 18-22k px², clamp for sanity
     return Math.min(
       MAX_BUBBLES,
-      Math.max(25, Math.round(area / divisor))
+      Math.max(35, Math.round(area / 20000))
     );
   }, [bounds]);
 
   const sizeRange: SizeRange = useMemo(() => {
     if (!bounds) return { min: 20, max: 180 };
     const isMobile = bounds.width < 640;
-    // Larger minimum size on mobile for easier tapping
-    return isMobile ? { min: 28, max: 260 } : { min: 12, max: 240 };
+    // Allow tiny (12px) up to very big (240-280px)
+    return isMobile ? { min: 18, max: 260 } : { min: 12, max: 240 };
   }, [bounds]);
 
   const createBubble = useCallback((): BubbleInstance | null => {
@@ -143,6 +141,13 @@ export function BubbleField({ bubbleColors, onScoreChange }: BubbleFieldProps) {
   const handlePopStart = useCallback(
     (bubble: BubbleInstance) => {
       soundManager.playPop();
+      // Tiny haptic for mobile
+      try {
+        if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+          // @ts-ignore - Vibrate exists on Navigator in browsers
+          navigator.vibrate(10);
+        }
+      } catch {}
       addBurst(bubble);
       onScoreChange?.(bubble.points);
     },

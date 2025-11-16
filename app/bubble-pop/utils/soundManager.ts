@@ -43,7 +43,17 @@ class SoundManager {
 
   playPop() {
     if (!this.enabled) return;
-    this.ensurePop().play();
+    const pop = this.ensurePop();
+    // Layer 1
+    const id1 = pop.play();
+    pop.rate(0.92, id1);
+    pop.volume(0.22, id1);
+    // Layer 2 slight offset
+    setTimeout(() => {
+      const id2 = pop.play();
+      pop.rate(1.1, id2);
+      pop.volume(0.18, id2);
+    }, 12);
   }
 
   private ensurePop() {
