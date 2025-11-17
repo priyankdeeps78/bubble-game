@@ -15,6 +15,7 @@ export function Fireflies({ enabled = true, count = 30 }: { enabled?: boolean; c
   const containerRef = useRef<HTMLDivElement | null>(null);
   const flies = useRef<Fly[]>([]);
   const raf = useRef(0);
+  const frameIndex = useRef(0);
 
   const bounds = useMemo(() => ({ w: typeof window !== "undefined" ? window.innerWidth : 1200, h: typeof window !== "undefined" ? window.innerHeight : 800 }), []);
 
@@ -39,7 +40,7 @@ export function Fireflies({ enabled = true, count = 30 }: { enabled?: boolean; c
         const dx = f.x - x;
         const dy = f.y - y;
         const dist = Math.max(8, Math.hypot(dx, dy));
-        const strength = 1.8 / (dist / 60); // closer flies scatter more
+        const strength = 1.6 / (dist / 60); // slightly gentler scatter
         f.vx += (dx / dist) * strength;
         f.vy += (dy / dist) * strength;
       }
@@ -49,7 +50,12 @@ export function Fireflies({ enabled = true, count = 30 }: { enabled?: boolean; c
 
     const step = () => {
       const nodes = containerRef.current?.children || [];
-      for (let i = 0; i < flies.current.length; i++) {
+      const N = flies.current.length;
+      const updateHalf = Math.ceil(N / 2);
+      const start = (frameIndex.current % 2 === 0) ? 0 : updateHalf;
+      const end = Math.min(N, start + updateHalf);
+
+      for (let i = start; i < end; i++) {
         const f = flies.current[i];
         // gentle drift with subtle sine wobble
         f.phase += 0.015;
@@ -67,11 +73,12 @@ export function Fireflies({ enabled = true, count = 30 }: { enabled?: boolean; c
         if (f.y > bounds.h + 10) f.y = -10;
         const el = nodes[i] as HTMLElement | undefined;
         if (el) {
-          el.style.transform = `translate(${f.x}px, ${f.y}px)`;
+          el.style.transform = `translate3d(${f.x}px, ${f.y}px, 0)`;
           const glow = 0.6 + 0.4 * Math.sin(f.phase * 3 + i * 0.7);
           el.style.opacity = String(glow);
         }
       }
+      frameIndex.current++;
       raf.current = requestAnimationFrame(step);
     };
     raf.current = requestAnimationFrame(step);
